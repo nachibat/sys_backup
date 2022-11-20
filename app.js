@@ -5,8 +5,8 @@ const path = require('path');
 const cron = require('node-cron');
 
 // https://crontab.guru/#0_1_*_*_*`
-cron.schedule('*/5 * * * * *', () => backupMongoDB()); // Cada 5 segundos
-// cron.schedule('0 1 * * *', () => backupMongoDB()); // Todos los dias a las 1 am
+// cron.schedule('*/5 * * * * *', () => backupMongoDB()); // Cada 5 segundos
+cron.schedule('0 1 * * *', () => backupMongoDB()); // Todos los dias a las 1 am
 
 function backupMongoDB() {
     const ARCHIVE_PATH = path.join(__dirname, 'public', `${process.env.DB_NAME}_${new Date().getTime()}.gzip`);
