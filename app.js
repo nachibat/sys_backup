@@ -4,10 +4,13 @@ const { spawn } = require('child_process');
 const path = require('path');
 const cron = require('node-cron');
 
-cron.schedule('*/5 * * * * *', () => backupMongoDB());
+// https://crontab.guru/#0_1_*_*_*`
+cron.schedule('*/5 * * * * *', () => backupMongoDB()); // Cada 5 segundos
+// cron.schedule('0 1 * * *', () => backupMongoDB()); // Todos los dias a las 1 am
 
 function backupMongoDB() {
     const ARCHIVE_PATH = path.join(__dirname, 'public', `${process.env.DB_NAME}_${new Date().getTime()}.gzip`);
+    console.log(`Saving backup at: `, ARCHIVE_PATH);
     let args;
     if (process.env.NODE_ENV === 'dev') {
         args = [
@@ -17,12 +20,13 @@ function backupMongoDB() {
         ];
     } else {
         args = [
-            `--port ${process.env.DB_PORT}`,
-            `-u ${process.env.USER_NAME}`,
-            `-p ${process.env.USER_PASS}`
+            `--port=${process.env.DB_PORT}`,
+            `--username=${process.env.USER_NAME}`,
+            `--password=${process.env.USER_PASS}`,
+            '--authenticationDatabase=admin',
             `--db=${process.env.DB_NAME}`,
             `--archive=${ARCHIVE_PATH}`,
-            `--gzip`
+            '--gzip'
         ];
     }
     
